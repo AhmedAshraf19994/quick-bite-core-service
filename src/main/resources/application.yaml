@@ -1,3 +1,19 @@
 spring:
   application:
     name: core-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/quickbite_core
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    baseline-on-migrate: true
+
+api:
+  endpoint:
+    base-url: /api/v1
