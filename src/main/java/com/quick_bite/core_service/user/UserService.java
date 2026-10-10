@@ -6,6 +6,7 @@ import com.quick_bite.core_service.user.dto.UpdateUserDto;
 import com.quick_bite.core_service.user.dto.UserResponseDto;
 import com.quick_bite.core_service.user.exceptions.UserExistsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
 
     public UserResponseDto createUser(CreateUserDto dto) {
         // check if user already exists
@@ -26,7 +29,9 @@ public class UserService {
         }
 
         User user = this.userMapper.toUser(dto);
+
         //password need to be hashed before saving too database
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
 
         User savedUser = this.userRepository.save(user);
 

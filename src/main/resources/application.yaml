@@ -17,3 +17,12 @@ spring:
 api:
   endpoint:
     base-url: /api/v1
+security:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
+    issuer: quickbite
+    expiration: 10m
+  refresh-token:
+    expiration: 7d
+
+
