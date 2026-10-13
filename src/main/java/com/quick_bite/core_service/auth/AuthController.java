@@ -32,7 +32,7 @@ public class AuthController {
                 .path("/api/v1/auth")
                 .sameSite("Lax")
                 .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());;
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         // to exclude the refreshToken from the response
         LoginResponseDto loginResponseDto = new LoginResponseDto(

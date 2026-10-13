@@ -11,7 +11,6 @@ import org.mapstruct.*;
 )
 public interface UserMapper {
 
-//    @Mapping(target="role", source = "role", qualifiedByName = "setRole")
     User toUser(CreateUserDto dto);
 
     UserResponseDto toUserResponseDto(User user);
