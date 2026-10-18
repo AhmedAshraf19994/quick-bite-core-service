@@ -108,6 +108,7 @@ public class ExceptionHandlerAdvice {
         );
     }
 
+
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     Response<?> handleBadCredentialsException (BadCredentialsException exp) {
@@ -131,6 +132,18 @@ public class ExceptionHandlerAdvice {
         );
     }
 
+    @ExceptionHandler(ForbiddenActionException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    Response<?> handleForbiddenActionException (ForbiddenActionException exp) {
+        return new Response<>(
+                false,
+                HttpStatus.FORBIDDEN.value(),
+                "You are not allowed to perform this action",
+                null
+        );
+    }
+
+
     // to catch unhandled exceptions
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -144,6 +157,8 @@ public class ExceptionHandlerAdvice {
                 null
         );
     }
+
+
 
 
 
