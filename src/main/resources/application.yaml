@@ -3,7 +3,7 @@ spring:
     name: core-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/quickbite_core
+    url: jdbc:postgresql://localhost:5434/quickbite_core
     username: postgres
     password: postgres
 
@@ -20,6 +20,7 @@ api:
 security:
   jwt:
     secret-key: ${JWT_SECRET_KEY}
+
     issuer: quickbite
     expiration: 10m
   refresh-token:

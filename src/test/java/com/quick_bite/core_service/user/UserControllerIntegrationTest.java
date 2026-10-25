@@ -2,9 +2,12 @@ package com.quick_bite.core_service.user;
 
 import com.quick_bite.core_service.user.dto.CreateUserDto;
 import com.quick_bite.core_service.user.dto.UpdateUserDto;
-import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +44,13 @@ class UserControllerIntegrationTest {
     void setUp() {
         userRepository.deleteAll();
     }
+
+    @AfterEach
+     void tearDown() {
+        userRepository.deleteAll();
+        // Cleanup code if needed
+    }
+
 
     @Test
     void shouldCreateUserSuccess() throws Exception {
