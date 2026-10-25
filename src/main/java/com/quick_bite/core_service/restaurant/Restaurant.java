@@ -46,4 +46,8 @@ public class Restaurant {
     private Instant updatedAt;
 
     private Instant statusUpdatedAt;
+
+    public long getOwnerId() {
+        return this.owner.getId();
+    }
 }

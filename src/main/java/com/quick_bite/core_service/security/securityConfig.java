@@ -32,6 +32,8 @@ public class securityConfig {
                                     .requestMatchers(  baseUrl + "/auth/rotate-token").permitAll()
                                     .requestMatchers(HttpMethod.POST,baseUrl + "/users").permitAll() // for user to sign up
                                     .requestMatchers(HttpMethod.GET, baseUrl+ "/restaurants").permitAll()
+                                    .requestMatchers(HttpMethod.GET, baseUrl + "/restaurants/{restaurantId}/branches").permitAll()
+                                    .requestMatchers(HttpMethod.GET, baseUrl + "/branches/nearby").permitAll()
                             .anyRequest().authenticated()
                     )
                .oauth2ResourceServer(oauth2 ->
