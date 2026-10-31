@@ -143,7 +143,6 @@ public class ExceptionHandlerAdvice {
         );
     }
 
-
     // to catch unhandled exceptions
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
