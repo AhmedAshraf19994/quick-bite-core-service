@@ -19,14 +19,17 @@ public class CurrentUserService {
     private final EntityManager entityManager;
 
     public User getCurrentUser() {
-        Jwt jwt = this.getJwt();
-        Long userId = Long.parseLong(Objects.requireNonNull(jwt.getSubject()));
+
+        Long userId = Long.parseLong(Objects.requireNonNull(this.getJwt().getSubject()));
         return this.entityManager.getReference(User.class, userId);
     }
 
     public boolean isAdmin() {
-        Jwt jwt = this.getJwt();
-        return Objects.equals(jwt.getClaim("authorities"), UserRole.SYSTEM_ADMIN.getValue());
+        return Objects.equals(this.getJwt().getClaim("authorities"), UserRole.SYSTEM_ADMIN.getValue());
+    }
+
+    public Long getCurrentUserId() {
+        return Long.parseLong(Objects.requireNonNull(getJwt().getSubject()));
     }
 
 
