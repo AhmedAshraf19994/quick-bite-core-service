@@ -1,10 +1,15 @@
 package com.quick_bite.core_service.security.refreshToken;
 
 import com.quick_bite.core_service.auth.dto.AuthResponse;
+import com.quick_bite.core_service.common.exception.ObjectNotFoundException;
+import com.quick_bite.core_service.rbac.dto.RestaurantMemberInfo;
+import com.quick_bite.core_service.rbac.entity.RestaurantMember;
+import com.quick_bite.core_service.rbac.repository.RestaurantMemberRepository;
 import com.quick_bite.core_service.security.jwt.JwtService;
 import com.quick_bite.core_service.security.refreshToken.exceptions.InvalidRefreshTokenException;
 import com.quick_bite.core_service.user.User;
 import com.quick_bite.core_service.user.UserMapper;
+import com.quick_bite.core_service.user.UserRole;
 import com.quick_bite.core_service.user.dto.UserResponseDto;
 import jakarta.persistence.Table;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +26,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +40,8 @@ public class RefreshTokenService {
     private final JwtService jwtService;
 
     private final UserMapper userMapper;
+
+    private final RestaurantMemberRepository restaurantMemberRepository;
 
     @Value("${security.refresh-token.expiration}")
     private  Duration refreshTokenDuration;
@@ -92,6 +100,7 @@ public class RefreshTokenService {
 
     }
 
+    @Transactional
     public AuthResponse rotateToken(String refreshToken) throws NoSuchAlgorithmException {
         // hash the token
         String hashedToken = hashToken(refreshToken);
@@ -107,6 +116,21 @@ public class RefreshTokenService {
         }
 
         token.revokeToken();
+
+        // get the member info for user
+        RestaurantMemberInfo memberInfo = null;
+        if(token.getUser().getRole() == UserRole.RESTAURANT_USER) {
+            RestaurantMember member = this.restaurantMemberRepository.findByUser(token.getUser())
+                    .orElseThrow(() -> new ObjectNotFoundException("Restaurant member"));
+
+            memberInfo = new RestaurantMemberInfo(
+                    member.getRestaurant().getId(),
+                    member.getRole().getName(),
+                    member.getBranches().stream()
+                            .map(memberBranch -> memberBranch.getBranch().getId()).collect(Collectors.toSet())
+            );
+        }
+
         // create new token
         String rawToken = generateRawToken();
 
@@ -123,7 +147,7 @@ public class RefreshTokenService {
 
         this.refreshTokenRepository.save(newToken);
 
-        String accessToken = this.jwtService.generateToken(token.getUser());
+        String accessToken = this.jwtService.generateToken(token.getUser(), memberInfo);
 
         UserResponseDto userResponseDto = this.userMapper.toUserResponseDto(token.getUser());
 

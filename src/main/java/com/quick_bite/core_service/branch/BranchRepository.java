@@ -1,6 +1,7 @@
 package com.quick_bite.core_service.branch;
 
 import com.quick_bite.core_service.restaurant.Restaurant;
+import jakarta.validation.constraints.NotNull;
 import org.aspectj.weaver.ast.Var;
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 
@@ -27,4 +29,6 @@ public interface BranchRepository extends JpaRepository<Branch, Long> {
             """,
             nativeQuery = true)
     List<Branch> findByLocation(@Param("lat")BigDecimal lat, @Param("lng") BigDecimal lng);
+
+    List<Branch> findAllByRestaurant_IdAndIdIn(Long restaurantId,  Set<Long> ids);
 }

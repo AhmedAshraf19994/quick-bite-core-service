@@ -1,5 +1,9 @@
 package com.quick_bite.core_service.security;
 
+import com.quick_bite.core_service.common.exception.ForbiddenActionException;
+import com.quick_bite.core_service.common.exception.UnauthenticatedException;
+import com.quick_bite.core_service.rbac.dto.RestaurantMemberInfo;
+import com.quick_bite.core_service.rbac.service.RolePermissionCacheService;
 import com.quick_bite.core_service.user.User;
 import com.quick_bite.core_service.user.UserRole;
 import jakarta.persistence.EntityManager;
@@ -9,14 +13,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class CurrentUserService {
 
     private final EntityManager entityManager;
+
+    private final ObjectMapper  objectMapper;
 
     public User getCurrentUser() {
 
@@ -35,15 +43,25 @@ public class CurrentUserService {
 
     private Jwt getJwt () {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication);
 
         if (authentication == null) {
-            throw new RuntimeException("User not authenticated");
+            throw new UnauthenticatedException();
         }
         if (!(authentication instanceof JwtAuthenticationToken)) {
-            throw new RuntimeException("User not authenticated");
+            throw new UnauthenticatedException();
         }
         return (Jwt) authentication.getPrincipal();
-
     }
+
+    public RestaurantMemberInfo getRestaurantMemberInfo () {
+        Object claim =  getJwt().getClaim("restaurantMemberInfo");
+        if (claim == null) {
+            throw new ForbiddenActionException();
+        }
+        return this.objectMapper.convertValue(claim, RestaurantMemberInfo.class);
+    }
+
+
+
+
 }
