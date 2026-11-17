@@ -143,6 +143,28 @@ public class ExceptionHandlerAdvice {
         );
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Response<?> handleBadRequestException (BadRequestException exp) {
+        return new Response<>(
+                false,
+                HttpStatus.BAD_REQUEST.value(),
+                exp.getMessage(),
+                null
+        );
+    }
+
+    @ExceptionHandler(UnauthenticatedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    Response<?> handleUnauthenticatedException(UnauthenticatedException exp) {
+        return new Response<>(
+                false,
+                HttpStatus.BAD_REQUEST.value(),
+                "please sign in",
+                null
+        );
+    }
+
     // to catch unhandled exceptions
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

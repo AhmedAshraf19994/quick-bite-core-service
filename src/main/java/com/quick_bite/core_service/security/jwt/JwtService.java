@@ -1,5 +1,6 @@
 package com.quick_bite.core_service.security.jwt;
 
+import com.quick_bite.core_service.rbac.dto.RestaurantMemberInfo;
 import com.quick_bite.core_service.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -19,7 +20,7 @@ public class JwtService {
 
     private final JwtEncoder jwtEncoder;
 
-    public String generateToken (User user) {
+    public String generateToken (User user, RestaurantMemberInfo restaurantMemberInfo) {
         Instant now = Instant.now();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -28,6 +29,7 @@ public class JwtService {
                 .issuedAt(now)
                 .expiresAt(now.plus(this.jwtProperties.expiration()))
                 .claim("authorities", user.getRole().getValue())
+                .claim("restaurantMemberInfo", restaurantMemberInfo)
                 .build();
 
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256)
